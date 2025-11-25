@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rocket Startup Launch – Startup Yo‘li</title>
+<style>
+    body { margin:0; font-family:Arial; background:#0b0f19; color:white; overflow:hidden; }
+    .container { text-align:center; padding-top:100px; }
+    h1 { font-size:36px; margin-bottom:10px; }
+    p { font-size:18px; opacity:0.8; }
+    #rocket { width:80px; position:absolute; bottom:-120px; left:50%; transform:translateX(-50%); transition:all 3s ease; }
+    button { 
+        margin-top:40px; padding:14px 28px; font-size:18px; border:none; cursor:pointer;
+        background:#ff4f4f; color:white; border-radius:8px; transition:0.2s;
+    }
+    button:hover { background:#ff2b2b; }
+    .stars {
+        position:absolute; width:100%; height:100%; top:0; left:0; overflow:hidden;
+    }
+    .star {
+        position:absolute; width:2px; height:2px; background:white; opacity:0.7;
+        animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle { from{opacity:0.2;} to{opacity:1;} }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+    <h1>🚀 Rocket Startup Launch</h1>
+    <p>Startup Yo‘li – Orzularingni uchirish vaqti keldi</p>
+    <button onclick="launch()">Uchirish</button>
+</div>
+
+<img id="rocket" src="rocket.png">
+
+<script>
+    function launch() {
+        document.getElementById("rocket").style.bottom = "120%";
+    }
+
+    const stars = document.getElementById("stars");
+    for (let i = 0; i < 120; i++) {
+        const s = document.createElement("div");
+        s.className = "star";
+        s.style.top = Math.random()*100+"%";
+        s.style.left = Math.random()*100+"%";
+        s.style.animationDuration = (1+Math.random()*2)+"s";
+        stars.appendChild(s);
+    }
+</script>
+
+</body>
+</html>
