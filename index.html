@@ -124,7 +124,7 @@ header {
   font-weight: 700;
   margin-top: -14px;
   padding: 0 4px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* MAIN PLAY AREA */
@@ -135,6 +135,7 @@ header {
   align-items: center;
   justify-content: center;
   position: relative;
+  width: 100%;
 }
 
 /* ROCKET */
@@ -146,6 +147,7 @@ header {
   justify-content: center;
   align-items: center;
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 5;
 }
 .rocket-img {
   width: 100%;
@@ -174,7 +176,7 @@ header {
   background: rgba(255,255,255,0.05);
   border-radius: 16px;
   padding: 20px 16px;
-  margin: 30px 0;
+  margin: 20px 0;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255,255,255,0.1);
 }
@@ -212,8 +214,13 @@ header {
   margin-top: 10px;
   font-size: 14px;
   font-weight: 700;
+  color: var(--text-muted);
 }
-.stat-val { color: var(--accent); }
+.stat-val { color: var(--white); margin-left:4px; }
+.timer-val { color: var(--white); font-variant-numeric: tabular-nums; }
+.timer-danger { color: var(--danger); animation: pulseRed 0.5s infinite; }
+
+@keyframes pulseRed { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
 
 /* CONTROLS */
 .controls {
@@ -249,6 +256,33 @@ header {
   border-radius: 12px;
   font-weight: 700;
   font-size: 14px;
+  cursor: pointer;
+}
+
+/* MESSAGES */
+.msg-bubble {
+  position: absolute;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #02121c;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 20;
+  max-width: 140px;
+  animation: floatUp 1.5s forwards;
+  opacity: 0;
+}
+.msg-good { background: #d1fae5; color: #064e3b; right: 10px; border-bottom-right-radius: 2px; }
+.msg-bad { background: #fee2e2; color: #7f1d1d; left: 10px; border-bottom-left-radius: 2px; }
+
+@keyframes floatUp {
+  0% { transform: translateY(10px) scale(0.9); opacity: 0; }
+  20% { transform: translateY(0) scale(1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
 }
 
 /* OVERLAYS */
@@ -263,25 +297,44 @@ header {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 30px;
+  padding: 24px;
   transition: opacity 0.3s;
 }
 .overlay.hidden { opacity: 0; pointer-events: none; }
-.overlay h2 { font-size: 28px; margin-bottom: 10px; color: var(--accent); }
-.overlay p { color: #ccc; line-height: 1.5; margin-bottom: 30px; }
+.overlay h2 { font-size: 26px; margin-bottom: 8px; color: var(--accent); margin-top:0; }
+.overlay p { color: #ccc; line-height: 1.5; margin-bottom: 24px; font-size: 14px; }
 
-.feedback {
-  position: absolute;
-  top: 40%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 40px;
-  font-weight: 900;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 20;
+/* Name Input */
+.input-group { margin-bottom: 20px; width: 100%; max-width: 300px; }
+.input-field {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
 }
-@keyframes popGood { 0% { opacity:0; transform: translate(-50%,-50%) scale(0.5); } 50% { opacity:1; transform: translate(-50%,-80%) scale(1.2); } 100% { opacity:0; transform: translate(-50%,-120%) scale(1); } }
-@keyframes popBad { 0% { opacity:0; transform: translate(-50%,-50%) rotate(-10deg); } 50% { opacity:1; transform: translate(-50%,-50%) rotate(10deg); color: var(--danger); } 100% { opacity:0; transform: translate(-50%,-30%); } }
+.input-field:focus { border-color: var(--accent); background: rgba(255,255,255,0.15); }
+
+/* Stats Card */
+.stats-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+.stat-row:last-child { border: none; margin: 0; padding: 0; }
+.stat-row span:last-child { font-weight: 700; color: var(--white); }
+
+/* Confetti */
+.confetti { position: absolute; width: 8px; height: 8px; background: var(--accent); animation: fall 3s linear forwards; }
+@keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
 </style>
 </head>
@@ -295,7 +348,7 @@ header {
       <h1>STARTUP YO‘LI</h1>
       <p>Tap on Time</p>
     </div>
-    <a href="https://t.me/startup_choyxona" target="_blank" class="community-link">Telegram ↗</a>
+    <a href="https://t.me/startup_choyxona" target="_blank" class="community-link">Startup Choyxona ↗</a>
   </header>
 
   <!-- Stage Progress -->
@@ -307,11 +360,10 @@ header {
     <div class="stage-seg"><div class="stage-fill" id="fill-4"></div></div>
   </div>
   <div class="stage-names">
-    <span>Idea</span><span>MVP</span><span>Test</span><span>Mkt</span><span>Invest</span>
+    <span>Idea</span><span>MVP</span><span>Test</span><span>Marketing</span><span>Invest</span>
   </div>
 
-  <div class="main-stage">
-    <div class="feedback" id="feedback-text"></div>
+  <div class="main-stage" id="main-stage-area">
     <div class="rocket-container" id="rocket-con">
       <!-- Simple SVG Rocket -->
       <svg class="rocket-img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -330,8 +382,8 @@ header {
       <div class="cursor" id="cursor"></div>
     </div>
     <div class="stats">
-      <span>Urinishlar: <span id="tries-display" class="stat-val">0</span></span>
-      <span>Bosqich: <span id="stage-display" class="stat-val">Idea</span></span>
+      <span>Player: <span id="player-display" class="stat-val">...</span></span>
+      <span>Deadline: <span id="timer-display" class="timer-val">15.0s</span></span>
     </div>
   </div>
 
@@ -339,299 +391,393 @@ header {
     <button class="btn-main" id="btn-tap">BOSISH 🚀</button>
     <div class="sub-controls">
       <button class="btn-sub" id="btn-sound">Ovoz: ON</button>
-      <button class="btn-sub" id="btn-retry" style="display:none">Qayta</button>
     </div>
   </div>
 
   <!-- Start Overlay -->
   <div class="overlay" id="start-screen">
-    <div style="font-size: 60px; margin-bottom:20px">🚀</div>
+    <div style="font-size: 50px; margin-bottom:10px">🚀</div>
     <h2>Startup Yo‘li</h2>
-    <p>Raqamli olamga xush kelibsiz. Raketani uchirish uchun yashil zona ichida <b>vaqtida bosing</b>.</p>
-    <p style="font-size:14px; color:var(--accent)">5 ta muvaffaqiyatli urinish = Keyingi bosqich</p>
+    <p>Ismingizni kiriting va o‘yinni boshlang.</p>
+    <div class="input-group">
+      <input type="text" id="username-input" class="input-field" placeholder="Ismingiz" maxlength="12">
+    </div>
+    <p style="font-size:12px; color:var(--accent); margin-top:-10px; margin-bottom:20px">Yashil zonada bosing • Vaqtni kuzating</p>
     <button class="btn-main" id="btn-start">O‘yinni Boshlash</button>
   </div>
 
-  <!-- Win Overlay -->
-  <div class="overlay hidden" id="win-screen">
-    <div style="font-size: 60px; margin-bottom:20px">🦄</div>
-    <h2>Tabriklaymiz!</h2>
-    <p>Sizning Startapingiz "Unicorn" darajasiga yetdi! Barcha bosqichlar muvaffaqiyatli yakunlandi.</p>
-    <button class="btn-main" onclick="location.reload()">Qayta O‘ynash</button>
+  <!-- Win/Fail Overlay -->
+  <div class="overlay hidden" id="end-screen">
+    <div id="end-icon" style="font-size: 50px; margin-bottom:10px">🎉</div>
+    <h2 id="end-title">Tabriklaymiz!</h2>
+    <p id="end-msg">Sizning Startapingiz muvaffaqiyatli!</p>
+
+    <div class="stats-card">
+      <div class="stat-row"><span>O‘yinchi</span><span id="end-name">-</span></div>
+      <div class="stat-row"><span>Bosqichlar</span><span id="end-stages">-</span></div>
+      <div class="stat-row"><span>Urinishlar</span><span id="end-taps">-</span></div>
+      <div class="stat-row"><span>Xatolar</span><span id="end-misses">-</span></div>
+      <div class="stat-row"><span>Vaqt</span><span id="end-time">-</span></div>
+    </div>
+
+    <div style="display:flex; gap:10px; width:100%; flex-direction:column">
+      <button class="btn-main" id="btn-restart">Qayta O‘ynash</button>
+      <a href="https://t.me/startup_choyxona" target="_blank" class="btn-sub" style="text-align:center; text-decoration:none; display:block">Telegramga Qo‘shilish</a>
+    </div>
   </div>
 </div>
 
 <script>
+// --- MESSAGES DATA ---
+const MESSAGES = {
+  0: { // Idea
+    good: ["Fikr ajoyib! 💡","Investorga tayyor! 📊","Brainstorm a’lo 👥","Idea pitch tayyor ✅","Qiziqish uyg‘ondi 💰","Fikr yozildi 📝","Team motivatsiya 🚀","Diagramma tayyor 📈","Yangi feature ✨","Fikr ijobiy 👍"],
+    bad: ["Charchadim 😓","Motivatsiya yo‘q 😅","Feedback yomon 😢","Prototip qiyin ✏️","Kod ishlamayapti 🐛","Server yo‘q 🖥️","Code review qoldi 🕒","Deadline stress 😬","Email ketmadi 📧","CSS buzuq 🎨"]
+  },
+  1: { // MVP
+    good: ["Beta ajoyib 👍","MVP ishlayapti! 🚀","Team ishladi 💪","Feedback ijobiy 🌟","Deploy bo‘ldi ✅","Feature on 🟢","Testing zo‘r 🧑‍💻","Bugfix complete 🔧","MVP demo ready 🎉","Launch cheers 🎊"],
+    bad: ["Buglar ko‘p 🐞","Frontend xato 😩","Backend bitmadi 🛠️","Database crash 😱","CSS xato 🎨","Login xato 🔴","Server sekin 🐢","Notif ishlamadi 📵","Session timeout 😬","API fail 🚫"]
+  },
+  2: { // Test
+    good: ["Test passed ✔️","Auto-test a’lo 🤖","QA approves ✅","UI perfect 🎨","Stage cleared 🚀","Testing zo‘r 👥","Fixes deployed 🔧","All passed 🏆","QA feedback 💪","Phase done 🎉"],
+    bad: ["Bug topildi ❌","Manual qiyin 😓","Crash report ⚠️","UX issue 😕","Error log 😵","Timeout ⏳","Page error 🌐","Data corrupt 😬","Lag detected 🐢","Tests failed ⚠️"]
+  },
+  3: { // Marketing
+    good: ["Ad started 📢","Users engaging 🔥","Strategy works 💡","PR article 📰","Influencer 🤝","Traffic spikes 📈","Content ready ✨","Leads generated ✅","Engagement up 📊","Stage cleared 🎉"],
+    bad: ["CTR past 😕","Social error 🛑","Bounce high 📧","Budget over 💸","Ads bad 😅","Page broken 🖥️","Disapproved 🚫","Conversion low 😓","Negative comments 😬","Analytics down 📉"]
+  },
+  4: { // Invest
+    good: ["Meeting set 📅","Funding offer 💰","Team excited 🚀","SAFE signed ✍️","Equity done ✅","Goal hit 🎯","Impressive 😎","Capital raised 🏦","Ready to scale 📈","Celebration! 🎉"],
+    bad: ["Rejected 😢","Due diligence 🕒","Investor doubts 🤔","Review delayed 🏛️","Term sheet ❌","Transfer delay 💸","Not convincing 😬","Postponed ⏳","Feedback critical ⚠️","Expenses 😅"]
+  }
+};
+
 // --- CONFIGURATION ---
 const stages = ['Idea', 'MVP', 'Test', 'Marketing', 'Invest'];
 const TOTAL_STAGES = 5;
 const TAPS_PER_STAGE = 5;
+const BASE_SPEED = 1.1;
+const SPEED_INC = 0.25;
+
+// Difficulty Tuning (Bonuses/Penalties in seconds)
+// Idea: Easy to gain time. Invest: Hard to gain, easy to lose.
+const TIME_CONFIG = [
+  { bonus: 3.0, penalty: 2.0 }, // Idea
+  { bonus: 2.5, penalty: 3.0 }, // MVP
+  { bonus: 2.0, penalty: 4.0 }, // Test
+  { bonus: 1.5, penalty: 5.0 }, // Marketing
+  { bonus: 1.0, penalty: 6.0 }  // Invest
+];
 
 // --- STATE ---
-let currentStage = 0;
-let stageProgress = 0; // 0 to 5
-let tries = 0;
-let isPlaying = false;
-let soundOn = true;
-let animId;
+let gameState = {
+  active: false,
+  stage: 0,
+  progress: 0, // taps in current stage
+  timer: 15.0,
+  totalTime: 0,
+  startTime: 0,
+  taps: 0,
+  misses: 0,
+  name: "Player",
+  animId: null
+};
 
-// Physics for Cursor
+// Physics
 let cursorPos = 0;
 let direction = 1;
 let speed = 1.0;
-const BASE_SPEED = 1.2;
-const SPEED_INC = 0.3; // Speed increase per stage
+let currentZone = { start: 0, end: 0 };
+let soundOn = true;
 
-// DOM Elements
-const cursorEl = document.getElementById('cursor');
-const zoneEl = document.getElementById('zone');
-const btnTap = document.getElementById('btn-tap');
-const btnStart = document.getElementById('btn-start');
-const startScreen = document.getElementById('start-screen');
-const winScreen = document.getElementById('win-screen');
-const rocketCon = document.getElementById('rocket-con');
-const feedbackEl = document.getElementById('feedback-text');
-const triesDisplay = document.getElementById('tries-display');
-const stageDisplay = document.getElementById('stage-display');
-const btnSound = document.getElementById('btn-sound');
-
-// --- INITIALIZATION ---
-function initStars() {
-  const space = document.getElementById('space');
-  for(let i=0; i<80; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    const size = Math.random() * 3 + 1;
-    s.style.width = size + 'px';
-    s.style.height = size + 'px';
-    s.style.setProperty('--dur', (Math.random()*3 + 1) + 's');
-    space.appendChild(s);
+// DOM
+const ui = {
+  cursor: document.getElementById('cursor'),
+  zone: document.getElementById('zone'),
+  timer: document.getElementById('timer-display'),
+  player: document.getElementById('player-display'),
+  fills: [0,1,2,3,4].map(i => document.getElementById(`fill-${i}`)),
+  stageArea: document.getElementById('main-stage-area'),
+  screens: {
+    start: document.getElementById('start-screen'),
+    end: document.getElementById('end-screen')
+  },
+  inputs: {
+    name: document.getElementById('username-input')
+  },
+  endStats: {
+    name: document.getElementById('end-name'),
+    stages: document.getElementById('end-stages'),
+    taps: document.getElementById('end-taps'),
+    misses: document.getElementById('end-misses'),
+    time: document.getElementById('end-time'),
+    title: document.getElementById('end-title'),
+    msg: document.getElementById('end-msg'),
+    icon: document.getElementById('end-icon')
   }
-  // Blinds (Glows)
-  for(let i=0; i<4; i++){
-    const b = document.createElement('div');
-    b.className = 'blind';
-    b.style.width = (Math.random()*200 + 100) + 'px';
-    b.style.height = b.style.width;
-    b.style.left = Math.random() * 90 + '%';
-    b.style.top = Math.random() * 90 + '%';
-    space.appendChild(b);
-  }
-}
+};
 
-// --- AUDIO SYSTEM (Synthetic) ---
+// --- AUDIO ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = new AudioContext();
 
-function playTone(freq, type, duration) {
+function playTone(freq, type, duration, vol=0.1) {
   if (!soundOn) return;
   if (audioCtx.state === 'suspended') audioCtx.resume();
-
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-
   osc.type = type;
   osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.start();
   osc.stop(audioCtx.currentTime + duration);
 }
 
-function sfxSuccess() {
-  if(!soundOn) return;
-  playTone(600, 'sine', 0.1);
-  setTimeout(() => playTone(900, 'square', 0.2), 100);
-}
+function sfxHit() { playTone(800, 'sine', 0.1); setTimeout(()=>playTone(1200, 'square', 0.1), 80); }
+function sfxMiss() { playTone(150, 'sawtooth', 0.3); setTimeout(()=>playTone(100, 'sawtooth', 0.3), 100); }
+function sfxStage() { playTone(400, 'sine', 0.2); setTimeout(()=>playTone(600, 'sine', 0.2), 150); setTimeout(()=>playTone(900, 'triangle', 0.6), 300); }
 
-function sfxFail() {
-  if(!soundOn) return;
-  playTone(200, 'sawtooth', 0.3);
-  setTimeout(() => playTone(150, 'sawtooth', 0.3), 100);
-}
-
-function sfxStageUp() {
-  if(!soundOn) return;
-  playTone(400, 'sine', 0.1);
-  setTimeout(() => playTone(600, 'sine', 0.1), 100);
-  setTimeout(() => playTone(800, 'sine', 0.4), 200);
-}
-
-// --- GAME LOGIC ---
+// --- LOGIC ---
 
 function randomizeZone() {
-  // Random position between 10% and 75%
-  const pos = Math.random() * 65 + 10;
-  // Size gets smaller as stages go up (Example: 20% down to 10%)
-  const size = Math.max(10, 20 - (currentStage * 2));
-
-  zoneEl.style.left = pos + '%';
-  zoneEl.style.width = size + '%';
-  return { start: pos, end: pos + size };
+  const diffFactor = gameState.stage * 2;
+  const width = Math.max(10, 20 - diffFactor);
+  const pos = Math.random() * (90 - width) + 5;
+  ui.zone.style.left = pos + '%';
+  ui.zone.style.width = width + '%';
+  return { start: pos, end: pos + width };
 }
 
-let currentZone = randomizeZone();
+function showMessage(type) {
+  const msgs = MESSAGES[gameState.stage][type === 'good' ? 'good' : 'bad'];
+  const text = msgs[Math.floor(Math.random() * msgs.length)];
 
-function startGame() {
-  startScreen.classList.add('hidden');
-  isPlaying = true;
-  speed = BASE_SPEED;
-  gameLoop();
+  const el = document.createElement('div');
+  el.className = `msg-bubble ${type === 'good' ? 'msg-good' : 'msg-bad'}`;
+  el.textContent = text;
+
+  // Random vertical pos
+  const top = Math.random() * 60 + 10;
+  el.style.top = top + '%';
+
+  ui.stageArea.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
 }
 
-function gameLoop() {
-  if (!isPlaying) return;
-
-  cursorPos += direction * speed;
-
-  if (cursorPos >= 100) {
-    cursorPos = 100;
-    direction = -1;
-  } else if (cursorPos <= 0) {
-    cursorPos = 0;
-    direction = 1;
-  }
-
-  cursorEl.style.left = cursorPos + '%';
-  animId = requestAnimationFrame(gameLoop);
+function updateTimerDisplay() {
+  ui.timer.textContent = gameState.timer.toFixed(1) + 's';
+  if (gameState.timer < 5) ui.timer.classList.add('timer-danger');
+  else ui.timer.classList.remove('timer-danger');
 }
 
-function handleTap() {
-  if (!isPlaying) return;
+function endGame(won) {
+  gameState.active = false;
+  cancelAnimationFrame(gameState.animId);
 
-  tries++;
-  triesDisplay.innerText = tries;
+  const endTime = (Date.now() - gameState.startTime) / 1000;
 
-  // Collision Detection
-  // Visual position is roughly center of cursor.
-  // Let's use raw percentages for simplicity.
-  const hit = cursorPos >= currentZone.start && cursorPos <= currentZone.end;
+  ui.screens.end.classList.remove('hidden');
+  ui.endStats.name.textContent = gameState.name;
+  ui.endStats.stages.textContent = won ? "Barchasi (5/5)" : `${stages[gameState.stage]} (${gameState.stage}/5)`;
+  ui.endStats.taps.textContent = gameState.taps;
+  ui.endStats.misses.textContent = gameState.misses;
+  ui.endStats.time.textContent = endTime.toFixed(1) + 's';
 
-  if (hit) {
-    handleSuccess();
+  if (won) {
+    ui.endStats.title.textContent = "Tabriklaymiz!";
+    ui.endStats.msg.textContent = `Startap "Unicorn" darajasiga yetdi! 🦄`;
+    ui.endStats.icon.textContent = "🎉";
+    launchConfetti();
+    sfxStage();
   } else {
-    handleFail();
+    ui.endStats.title.textContent = "Vaqt Tugadi!";
+    ui.endStats.msg.textContent = "Keyingi safar albatta o‘xshaydi.";
+    ui.endStats.icon.textContent = "⌛";
+    sfxMiss();
   }
-}
-
-function showFeedback(text, type) {
-  feedbackEl.innerText = text;
-  feedbackEl.style.color = type === 'good' ? 'var(--accent)' : 'var(--danger)';
-  feedbackEl.style.animation = 'none';
-  feedbackEl.offsetHeight; // trigger reflow
-  feedbackEl.style.animation = type === 'good' ? 'popGood 0.8s ease-out' : 'popBad 0.6s ease-out';
-}
-
-function handleSuccess() {
-  stageProgress++;
-  sfxSuccess();
-  showFeedback("YAXSHI!", 'good');
-
-  // Animate Rocket
-  rocketCon.style.transform = "scale(1.2) translateY(-10px)";
-  setTimeout(() => rocketCon.style.transform = "scale(1) translateY(0)", 200);
-
-  updateUI();
-
-  if (stageProgress >= TAPS_PER_STAGE) {
-    nextStage();
-  } else {
-    // Make it slightly harder immediately or keep same rhythm
-    currentZone = randomizeZone();
-    // Speed slightly up within stage? Optional.
-  }
-}
-
-function handleFail() {
-  sfxFail();
-  showFeedback("XATO", 'bad');
-
-  // Punishment: Lose progress (but not below 0 for current stage)
-  if(stageProgress > 0) stageProgress--;
-
-  // Shake Rocket
-  rocketCon.style.transform = "translateX(10px) rotate(5deg)";
-  setTimeout(() => {
-     rocketCon.style.transform = "translateX(-10px) rotate(-5deg)";
-     setTimeout(() => rocketCon.style.transform = "scale(1)", 100);
-  }, 100);
-
-  updateUI();
-
-  // Vibration
-  if(navigator.vibrate) navigator.vibrate(200);
 }
 
 function nextStage() {
-  currentStage++;
-  stageProgress = 0;
+  gameState.stage++;
+  gameState.progress = 0;
 
-  if (currentStage >= TOTAL_STAGES) {
-    gameWin();
+  if (gameState.stage >= TOTAL_STAGES) {
+    endGame(true);
+    return;
+  }
+
+  sfxStage();
+  speed = BASE_SPEED + (gameState.stage * SPEED_INC);
+  currentZone = randomizeZone();
+  updateProgress();
+
+  // Rocket Fly animation
+  const r = document.getElementById('rocket-con');
+  r.style.transform = "scale(1.2) rotate(-10deg)";
+  setTimeout(()=>r.style.transform="scale(1) rotate(0)", 300);
+}
+
+function handleTap() {
+  if (!gameState.active) return;
+
+  const hit = cursorPos >= currentZone.start && cursorPos <= currentZone.end;
+  gameState.taps++;
+
+  if (hit) {
+    sfxHit();
+    showMessage('good');
+    gameState.progress++;
+    gameState.timer += TIME_CONFIG[gameState.stage].bonus;
+
+    // Slight rocket pump
+    document.getElementById('rocket-con').style.transform = "scale(1.05)";
+    setTimeout(()=>document.getElementById('rocket-con').style.transform="scale(1)", 100);
+
   } else {
-    sfxStageUp();
-    speed = BASE_SPEED + (currentStage * SPEED_INC);
-    stageDisplay.innerText = stages[currentStage];
-    updateUI();
+    sfxMiss();
+    showMessage('bad');
+    gameState.misses++;
+    gameState.timer -= TIME_CONFIG[gameState.stage].penalty;
+
+    // Shake
+    const r = document.getElementById('rocket-con');
+    r.style.transform = "translateX(5px)";
+    setTimeout(()=>r.style.transform="translateX(-5px)", 50);
+    setTimeout(()=>r.style.transform="translateX(0)", 100);
+
+    if(navigator.vibrate) navigator.vibrate(200);
+  }
+
+  // Cap timer max? No, let them stack if they are good.
+
+  updateProgress();
+  updateTimerDisplay();
+
+  if (gameState.timer <= 0) {
+    endGame(false);
+    return;
+  }
+
+  if (gameState.progress >= TAPS_PER_STAGE) {
+    nextStage();
+  } else if (hit) {
     currentZone = randomizeZone();
-    rocketCon.classList.add('flying');
-    setTimeout(() => rocketCon.classList.remove('flying'), 1000);
   }
 }
 
-function updateUI() {
-  // Update Bars
-  for(let i=0; i<TOTAL_STAGES; i++) {
-    const bar = document.getElementById('fill-' + i);
-    if (i < currentStage) {
-      bar.style.width = '100%';
-    } else if (i === currentStage) {
-      bar.style.width = (stageProgress / TAPS_PER_STAGE * 100) + '%';
-    } else {
-      bar.style.width = '0%';
-    }
+function updateProgress() {
+  // Update Stage Bars
+  ui.fills.forEach((el, i) => {
+    if (i < gameState.stage) el.style.width = '100%';
+    else if (i === gameState.stage) el.style.width = (gameState.progress / TAPS_PER_STAGE * 100) + '%';
+    else el.style.width = '0%';
+  });
+}
+
+function loop(timestamp) {
+  if (!gameState.active) return;
+
+  // Timer Decay logic
+  // We subtract frame delta roughly, but for simplicity in this RAF:
+  // Let's rely on a precise check next time, but simple subtraction per frame:
+  // 60fps -> 0.016s
+  gameState.timer -= 0.016;
+  if (gameState.timer <= 0) {
+    gameState.timer = 0;
+    updateTimerDisplay();
+    endGame(false);
+    return;
+  }
+  updateTimerDisplay();
+
+  // Cursor Move
+  cursorPos += direction * speed;
+  if (cursorPos >= 100) { cursorPos = 100; direction = -1; }
+  if (cursorPos <= 0) { cursorPos = 0; direction = 1; }
+  ui.cursor.style.left = cursorPos + '%';
+
+  gameState.animId = requestAnimationFrame(loop);
+}
+
+function startGame() {
+  const name = ui.inputs.name.value.trim() || "Founder";
+  gameState.name = name;
+  ui.player.textContent = name;
+
+  gameState.active = true;
+  gameState.stage = 0;
+  gameState.progress = 0;
+  gameState.timer = 15.0;
+  gameState.taps = 0;
+  gameState.misses = 0;
+  gameState.startTime = Date.now();
+
+  speed = BASE_SPEED;
+  currentZone = randomizeZone();
+  updateProgress();
+
+  ui.screens.start.classList.add('hidden');
+  ui.screens.end.classList.add('hidden');
+
+  // Remove any old confetti
+  document.querySelectorAll('.confetti').forEach(e => e.remove());
+
+  gameState.animId = requestAnimationFrame(loop);
+}
+
+// --- CONFETTI ---
+function launchConfetti() {
+  for(let i=0; i<50; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.top = '-10px';
+    c.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+    c.style.animationDuration = (Math.random()*2 + 2) + 's';
+    c.style.animationDelay = (Math.random()*1) + 's';
+    document.body.appendChild(c);
   }
 }
 
-function gameWin() {
-  isPlaying = false;
-  winScreen.classList.remove('hidden');
-  sfxStageUp();
-  // Fireworks effect could go here
+// --- INIT STARS (Visuals) ---
+function initVisuals() {
+  const space = document.getElementById('space');
+  for(let i=0; i<60; i++) {
+    const s = document.createElement('div');
+    s.className='star';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.width=Math.random()*2+'px';
+    s.style.height=s.style.width;
+    s.style.setProperty('--dur',(Math.random()*2+1)+'s');
+    space.appendChild(s);
+  }
 }
 
-// --- EVENT LISTENERS ---
-
-btnStart.addEventListener('click', () => {
-  // AudioContext often needs user gesture
+// --- EVENTS ---
+document.getElementById('btn-start').addEventListener('click', () => {
   if (audioCtx.state === 'suspended') audioCtx.resume();
   startGame();
 });
 
-btnTap.addEventListener('mousedown', (e) => { e.preventDefault(); handleTap(); });
-btnTap.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(); });
+document.getElementById('btn-restart').addEventListener('click', startGame);
 
-// Keyboard support
-document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && isPlaying) {
-    handleTap();
-  }
-});
+document.getElementById('btn-tap').addEventListener('mousedown', (e) => { e.preventDefault(); handleTap(); });
+document.getElementById('btn-tap').addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(); });
 
-btnSound.addEventListener('click', () => {
+document.getElementById('btn-sound').addEventListener('click', (e) => {
   soundOn = !soundOn;
-  btnSound.innerText = "Ovoz: " + (soundOn ? "ON" : "OFF");
+  e.target.textContent = "Ovoz: " + (soundOn ? "🔉 ON" : "🔇 OFF");
 });
 
-// Run
-initStars();
-updateUI();
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && gameState.active) handleTap();
+});
+
+initVisuals();
 
 </script>
 </body>
