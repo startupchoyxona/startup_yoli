@@ -1,57 +1,638 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rocket Startup Launch – Startup Yo‘li</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<title>Startup Yo‘li — Tap on Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-    body { margin:0; font-family:Arial; background:#0b0f19; color:white; overflow:hidden; }
-    .container { text-align:center; padding-top:100px; }
-    h1 { font-size:36px; margin-bottom:10px; }
-    p { font-size:18px; opacity:0.8; }
-    #rocket { width:80px; position:absolute; bottom:-120px; left:50%; transform:translateX(-50%); transition:all 3s ease; }
-    button { 
-        margin-top:40px; padding:14px 28px; font-size:18px; border:none; cursor:pointer;
-        background:#ff4f4f; color:white; border-radius:8px; transition:0.2s;
-    }
-    button:hover { background:#ff2b2b; }
-    .stars {
-        position:absolute; width:100%; height:100%; top:0; left:0; overflow:hidden;
-    }
-    .star {
-        position:absolute; width:2px; height:2px; background:white; opacity:0.7;
-        animation: twinkle 2s infinite alternate;
-    }
-    @keyframes twinkle { from{opacity:0.2;} to{opacity:1;} }
+:root{
+  --bg-dark: #02121c;
+  --bg-light: #062635;
+  --accent: rgb(90,200,150);
+  --accent-glow: rgba(90,200,150,0.5);
+  --white: #ffffff;
+  --text-muted: rgba(255,255,255,0.6);
+  --danger: #ff4757;
+  --font-main: 'Inter', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: var(--bg-dark);
+  background: radial-gradient(circle at center bottom, var(--bg-light) 0%, var(--bg-dark) 80%);
+  font-family: var(--font-main);
+  color: var(--white);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- SPACE BACKGROUND --- */
+#space {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle var(--dur) ease-in-out infinite;
+}
+.blind {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(90,200,150,0.2) 30%, transparent 70%);
+  filter: blur(8px);
+  opacity: 0;
+  animation: floatBlind 8s ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+@keyframes floatBlind { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; } 50% { transform: translateY(-20px) scale(1.2); opacity: 0.6; } }
+
+/* --- GAME CONTAINER --- */
+#game-ui {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  max-height: 850px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+/* HEADER */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+.logo-area h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+.logo-area p { margin: 0; font-size: 12px; color: var(--text-muted); }
+.community-link {
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 700;
+  background: rgba(90,200,150,0.1);
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(90,200,150,0.3);
+}
+
+/* STAGE BAR */
+.stage-track {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.stage-seg {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.stage-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transition: width 0.3s ease;
+}
+.stage-names {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: -14px;
+  padding: 0 4px;
+  margin-bottom: 20px;
+}
+
+/* MAIN PLAY AREA */
+.main-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* ROCKET */
+.rocket-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.rocket-img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+  z-index: 2;
+}
+.rocket-flame {
+  position: absolute;
+  bottom: -20px;
+  width: 20px;
+  height: 40px;
+  background: linear-gradient(to bottom, #ff9f43, #ff4757, transparent);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 1;
+  filter: blur(4px);
+}
+.flying .rocket-flame { opacity: 0.8; animation: flicker 0.1s infinite alternate; }
+@keyframes flicker { from { transform: scale(1); } to { transform: scale(1.1) translateY(2px); } }
+
+/* METER (The Game Mechanic) */
+.meter-container {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 20px 16px;
+  margin: 30px 0;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.meter-bar {
+  height: 30px;
+  background: #0d1f2b;
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+.zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
+  border-left: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  width: 15%;
+  left: 42.5%; /* Center-ish */
+  z-index: 1;
+}
+.cursor {
+  position: absolute;
+  top: 2px; bottom: 2px;
+  width: 6px;
+  background: #fff;
+  border-radius: 4px;
+  left: 0%;
+  z-index: 2;
+  box-shadow: 0 0 10px white;
+}
+.stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.stat-val { color: var(--accent); }
+
+/* CONTROLS */
+.controls {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+.btn-main {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, #3ba87d 100%);
+  border: none;
+  padding: 20px;
+  border-radius: 16px;
+  color: #03202e;
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 0 #2a7a5b, 0 15px 20px rgba(0,0,0,0.3);
+  transition: all 0.1s;
+  cursor: pointer;
+}
+.btn-main:active { transform: translateY(4px); box-shadow: 0 2px 0 #2a7a5b, 0 5px 10px rgba(0,0,0,0.3); }
+
+.sub-controls { display: flex; gap: 10px; }
+.btn-sub {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* OVERLAYS */
+.overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(2, 18, 28, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+  transition: opacity 0.3s;
+}
+.overlay.hidden { opacity: 0; pointer-events: none; }
+.overlay h2 { font-size: 28px; margin-bottom: 10px; color: var(--accent); }
+.overlay p { color: #ccc; line-height: 1.5; margin-bottom: 30px; }
+
+.feedback {
+  position: absolute;
+  top: 40%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  font-weight: 900;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+@keyframes popGood { 0% { opacity:0; transform: translate(-50%,-50%) scale(0.5); } 50% { opacity:1; transform: translate(-50%,-80%) scale(1.2); } 100% { opacity:0; transform: translate(-50%,-120%) scale(1); } }
+@keyframes popBad { 0% { opacity:0; transform: translate(-50%,-50%) rotate(-10deg); } 50% { opacity:1; transform: translate(-50%,-50%) rotate(10deg); color: var(--danger); } 100% { opacity:0; transform: translate(-50%,-30%); } }
+
 </style>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
+<div id="space"></div>
 
-<div class="container">
-    <h1>🚀 Rocket Startup Launch</h1>
-    <p>Startup Yo‘li – Orzularingni uchirish vaqti keldi</p>
-    <button onclick="launch()">Uchirish</button>
+<div id="game-ui">
+  <header>
+    <div class="logo-area">
+      <h1>STARTUP YO‘LI</h1>
+      <p>Tap on Time</p>
+    </div>
+    <a href="https://t.me/startup_choyxona" target="_blank" class="community-link">Telegram ↗</a>
+  </header>
+
+  <!-- Stage Progress -->
+  <div class="stage-track">
+    <div class="stage-seg"><div class="stage-fill" id="fill-0"></div></div>
+    <div class="stage-seg"><div class="stage-fill" id="fill-1"></div></div>
+    <div class="stage-seg"><div class="stage-fill" id="fill-2"></div></div>
+    <div class="stage-seg"><div class="stage-fill" id="fill-3"></div></div>
+    <div class="stage-seg"><div class="stage-fill" id="fill-4"></div></div>
+  </div>
+  <div class="stage-names">
+    <span>Idea</span><span>MVP</span><span>Test</span><span>Mkt</span><span>Invest</span>
+  </div>
+
+  <div class="main-stage">
+    <div class="feedback" id="feedback-text"></div>
+    <div class="rocket-container" id="rocket-con">
+      <!-- Simple SVG Rocket -->
+      <svg class="rocket-img" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#e0e0e0" d="M256 16c-60 0-100 80-100 180 0 65 30 110 60 140v80l40 40 40-40v-80c30-30 60-75 60-140 0-100-40-180-100-180z"/>
+        <path fill="#ff4757" d="M156 196c-30 30-50 80-50 140 0 60 40 100 40 100s-10-30-10-60c0-30 20-80 20-180z"/>
+        <path fill="#ff4757" d="M356 196c30 30 50 80 50 140 0 60-40 100-40 100s10-30 10-60c0-30-20-80-20-180z"/>
+        <circle cx="256" cy="160" r="30" fill="#90c896" stroke="#222" stroke-width="8"/>
+      </svg>
+      <div class="rocket-flame"></div>
+    </div>
+  </div>
+
+  <div class="meter-container">
+    <div class="meter-bar">
+      <div class="zone" id="zone"></div>
+      <div class="cursor" id="cursor"></div>
+    </div>
+    <div class="stats">
+      <span>Urinishlar: <span id="tries-display" class="stat-val">0</span></span>
+      <span>Bosqich: <span id="stage-display" class="stat-val">Idea</span></span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-main" id="btn-tap">BOSISH 🚀</button>
+    <div class="sub-controls">
+      <button class="btn-sub" id="btn-sound">Ovoz: ON</button>
+      <button class="btn-sub" id="btn-retry" style="display:none">Qayta</button>
+    </div>
+  </div>
+
+  <!-- Start Overlay -->
+  <div class="overlay" id="start-screen">
+    <div style="font-size: 60px; margin-bottom:20px">🚀</div>
+    <h2>Startup Yo‘li</h2>
+    <p>Raqamli olamga xush kelibsiz. Raketani uchirish uchun yashil zona ichida <b>vaqtida bosing</b>.</p>
+    <p style="font-size:14px; color:var(--accent)">5 ta muvaffaqiyatli urinish = Keyingi bosqich</p>
+    <button class="btn-main" id="btn-start">O‘yinni Boshlash</button>
+  </div>
+
+  <!-- Win Overlay -->
+  <div class="overlay hidden" id="win-screen">
+    <div style="font-size: 60px; margin-bottom:20px">🦄</div>
+    <h2>Tabriklaymiz!</h2>
+    <p>Sizning Startapingiz "Unicorn" darajasiga yetdi! Barcha bosqichlar muvaffaqiyatli yakunlandi.</p>
+    <button class="btn-main" onclick="location.reload()">Qayta O‘ynash</button>
+  </div>
 </div>
 
-<img id="rocket" src="rocket.png">
-
 <script>
-    function launch() {
-        document.getElementById("rocket").style.bottom = "120%";
-    }
+// --- CONFIGURATION ---
+const stages = ['Idea', 'MVP', 'Test', 'Marketing', 'Invest'];
+const TOTAL_STAGES = 5;
+const TAPS_PER_STAGE = 5;
 
-    const stars = document.getElementById("stars");
-    for (let i = 0; i < 120; i++) {
-        const s = document.createElement("div");
-        s.className = "star";
-        s.style.top = Math.random()*100+"%";
-        s.style.left = Math.random()*100+"%";
-        s.style.animationDuration = (1+Math.random()*2)+"s";
-        stars.appendChild(s);
+// --- STATE ---
+let currentStage = 0;
+let stageProgress = 0; // 0 to 5
+let tries = 0;
+let isPlaying = false;
+let soundOn = true;
+let animId;
+
+// Physics for Cursor
+let cursorPos = 0;
+let direction = 1;
+let speed = 1.0;
+const BASE_SPEED = 1.2;
+const SPEED_INC = 0.3; // Speed increase per stage
+
+// DOM Elements
+const cursorEl = document.getElementById('cursor');
+const zoneEl = document.getElementById('zone');
+const btnTap = document.getElementById('btn-tap');
+const btnStart = document.getElementById('btn-start');
+const startScreen = document.getElementById('start-screen');
+const winScreen = document.getElementById('win-screen');
+const rocketCon = document.getElementById('rocket-con');
+const feedbackEl = document.getElementById('feedback-text');
+const triesDisplay = document.getElementById('tries-display');
+const stageDisplay = document.getElementById('stage-display');
+const btnSound = document.getElementById('btn-sound');
+
+// --- INITIALIZATION ---
+function initStars() {
+  const space = document.getElementById('space');
+  for(let i=0; i<80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    const size = Math.random() * 3 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.setProperty('--dur', (Math.random()*3 + 1) + 's');
+    space.appendChild(s);
+  }
+  // Blinds (Glows)
+  for(let i=0; i<4; i++){
+    const b = document.createElement('div');
+    b.className = 'blind';
+    b.style.width = (Math.random()*200 + 100) + 'px';
+    b.style.height = b.style.width;
+    b.style.left = Math.random() * 90 + '%';
+    b.style.top = Math.random() * 90 + '%';
+    space.appendChild(b);
+  }
+}
+
+// --- AUDIO SYSTEM (Synthetic) ---
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = new AudioContext();
+
+function playTone(freq, type, duration) {
+  if (!soundOn) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+  gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfxSuccess() {
+  if(!soundOn) return;
+  playTone(600, 'sine', 0.1);
+  setTimeout(() => playTone(900, 'square', 0.2), 100);
+}
+
+function sfxFail() {
+  if(!soundOn) return;
+  playTone(200, 'sawtooth', 0.3);
+  setTimeout(() => playTone(150, 'sawtooth', 0.3), 100);
+}
+
+function sfxStageUp() {
+  if(!soundOn) return;
+  playTone(400, 'sine', 0.1);
+  setTimeout(() => playTone(600, 'sine', 0.1), 100);
+  setTimeout(() => playTone(800, 'sine', 0.4), 200);
+}
+
+// --- GAME LOGIC ---
+
+function randomizeZone() {
+  // Random position between 10% and 75%
+  const pos = Math.random() * 65 + 10;
+  // Size gets smaller as stages go up (Example: 20% down to 10%)
+  const size = Math.max(10, 20 - (currentStage * 2));
+
+  zoneEl.style.left = pos + '%';
+  zoneEl.style.width = size + '%';
+  return { start: pos, end: pos + size };
+}
+
+let currentZone = randomizeZone();
+
+function startGame() {
+  startScreen.classList.add('hidden');
+  isPlaying = true;
+  speed = BASE_SPEED;
+  gameLoop();
+}
+
+function gameLoop() {
+  if (!isPlaying) return;
+
+  cursorPos += direction * speed;
+
+  if (cursorPos >= 100) {
+    cursorPos = 100;
+    direction = -1;
+  } else if (cursorPos <= 0) {
+    cursorPos = 0;
+    direction = 1;
+  }
+
+  cursorEl.style.left = cursorPos + '%';
+  animId = requestAnimationFrame(gameLoop);
+}
+
+function handleTap() {
+  if (!isPlaying) return;
+
+  tries++;
+  triesDisplay.innerText = tries;
+
+  // Collision Detection
+  // Visual position is roughly center of cursor.
+  // Let's use raw percentages for simplicity.
+  const hit = cursorPos >= currentZone.start && cursorPos <= currentZone.end;
+
+  if (hit) {
+    handleSuccess();
+  } else {
+    handleFail();
+  }
+}
+
+function showFeedback(text, type) {
+  feedbackEl.innerText = text;
+  feedbackEl.style.color = type === 'good' ? 'var(--accent)' : 'var(--danger)';
+  feedbackEl.style.animation = 'none';
+  feedbackEl.offsetHeight; // trigger reflow
+  feedbackEl.style.animation = type === 'good' ? 'popGood 0.8s ease-out' : 'popBad 0.6s ease-out';
+}
+
+function handleSuccess() {
+  stageProgress++;
+  sfxSuccess();
+  showFeedback("YAXSHI!", 'good');
+
+  // Animate Rocket
+  rocketCon.style.transform = "scale(1.2) translateY(-10px)";
+  setTimeout(() => rocketCon.style.transform = "scale(1) translateY(0)", 200);
+
+  updateUI();
+
+  if (stageProgress >= TAPS_PER_STAGE) {
+    nextStage();
+  } else {
+    // Make it slightly harder immediately or keep same rhythm
+    currentZone = randomizeZone();
+    // Speed slightly up within stage? Optional.
+  }
+}
+
+function handleFail() {
+  sfxFail();
+  showFeedback("XATO", 'bad');
+
+  // Punishment: Lose progress (but not below 0 for current stage)
+  if(stageProgress > 0) stageProgress--;
+
+  // Shake Rocket
+  rocketCon.style.transform = "translateX(10px) rotate(5deg)";
+  setTimeout(() => {
+     rocketCon.style.transform = "translateX(-10px) rotate(-5deg)";
+     setTimeout(() => rocketCon.style.transform = "scale(1)", 100);
+  }, 100);
+
+  updateUI();
+
+  // Vibration
+  if(navigator.vibrate) navigator.vibrate(200);
+}
+
+function nextStage() {
+  currentStage++;
+  stageProgress = 0;
+
+  if (currentStage >= TOTAL_STAGES) {
+    gameWin();
+  } else {
+    sfxStageUp();
+    speed = BASE_SPEED + (currentStage * SPEED_INC);
+    stageDisplay.innerText = stages[currentStage];
+    updateUI();
+    currentZone = randomizeZone();
+    rocketCon.classList.add('flying');
+    setTimeout(() => rocketCon.classList.remove('flying'), 1000);
+  }
+}
+
+function updateUI() {
+  // Update Bars
+  for(let i=0; i<TOTAL_STAGES; i++) {
+    const bar = document.getElementById('fill-' + i);
+    if (i < currentStage) {
+      bar.style.width = '100%';
+    } else if (i === currentStage) {
+      bar.style.width = (stageProgress / TAPS_PER_STAGE * 100) + '%';
+    } else {
+      bar.style.width = '0%';
     }
+  }
+}
+
+function gameWin() {
+  isPlaying = false;
+  winScreen.classList.remove('hidden');
+  sfxStageUp();
+  // Fireworks effect could go here
+}
+
+// --- EVENT LISTENERS ---
+
+btnStart.addEventListener('click', () => {
+  // AudioContext often needs user gesture
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  startGame();
+});
+
+btnTap.addEventListener('mousedown', (e) => { e.preventDefault(); handleTap(); });
+btnTap.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(); });
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && isPlaying) {
+    handleTap();
+  }
+});
+
+btnSound.addEventListener('click', () => {
+  soundOn = !soundOn;
+  btnSound.innerText = "Ovoz: " + (soundOn ? "ON" : "OFF");
+});
+
+// Run
+initStars();
+updateUI();
+
 </script>
-
 </body>
 </html>
